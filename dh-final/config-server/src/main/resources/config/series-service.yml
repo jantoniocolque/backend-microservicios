@@ -1,0 +1,27 @@
+server:
+  port: 8082
+spring:
+  application:
+    name: series-service
+  data:
+    mongodb:
+      host: series-database
+      username: series
+      password: series
+      port: 27018
+      database: series_database
+  zipkin:
+    base-url: http://zipkin:9411/
+    enabled: true
+eureka:
+  instance:
+    preferIpAddress: true
+    leaseRenewalIntervalInSeconds: 5
+    leaseExpirationDurationInSeconds: 10
+  client:
+    fetchRegistry: false
+    registerWithEureka: true
+    healthCheck:
+      enabled: true
+    serviceUrl:
+      defaultZone: http://eureka-server:8761/eureka

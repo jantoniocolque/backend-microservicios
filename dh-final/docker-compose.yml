@@ -1,0 +1,102 @@
+services:
+  config-server:
+    image: dh/dh-final-config-server:latest
+    container_name: dh-final-config-server
+    build: ../config-server
+    ports:
+      - 8888:8888
+    depends_on:
+      - zipkin
+  eureka-server:
+    image: dh/dh-final-eureka-server:latest
+    container_name: dh-final-eureka-server
+    build: ../eureka-server
+    ports:
+      - 8761:8761
+    depends_on:
+      - config-server
+      - zipkin
+  catalog-service:
+    image: dh/dh-final-eureka-server:latest
+    container_name: dh-final-catalog-service
+    build: ../catalog-service
+    ports:
+      - 8083:8083
+    depends_on:
+      - config-server
+      - zipkin
+      - eureka-server
+      - rabbitmq
+      - catalog-database
+  movies-service:
+    image: dh/dh-final-movies-service:latest
+    container_name: dh-final-movies-service
+    build: ../movie-service
+    ports:
+      - 8081:8081
+    depends_on:
+      - config-server
+      - zipkin
+      - eureka-server
+      - rabbitmq
+      - movies-database
+  series-service:
+    image: dh/dh-final-series-service:latest
+    container_name: dh-final-series-service
+    build: ../series-service
+    ports:
+      - 8081:8081
+    depends_on:
+      - config-server
+      - zipkin
+      - eureka-server
+      - rabbitmq
+      - series-database
+  zipkin:
+    container_name: zipkin-server
+    image: openzipkin/zipkin:2
+    ports:
+      - 9411:9411
+  rabbitmq:
+    container_name: rabbitmq-server
+    image: rabbitmq:3-management
+    ports:
+      - 5672:5672
+      - 15672:15672
+  movies-database:
+    image: bitnami/mysql:latest
+    container_name: movies-db
+    ports:
+      - 3306:3306
+    environment:
+      TZ: "UTC"
+      MYSQL_ROOT_PASSWORD: root
+      BITNAMI_DEBUG: "true"
+    volumes:
+      -movies-db:/bitnami/mysql/data
+  series-database:
+    image: bitnami/mongodb:latest
+    container_name: series-db
+    ports:
+      - 27018:27018
+    environment:
+      MONGODB_ROOT_PASSWORD: root
+      MONGODB_PORT_NUMBER: "27018"
+    volumes:
+      - series-db:/bitnami/mongodb
+  catalog-database:
+    image: bitnami/mongodb:latest
+    container_name: catalog-db
+    ports:
+      - 27017:27017
+    environment:
+      MONGODB_ROOT_PASSWORD: root
+    volumes:
+      -catalog-db:/bitnami/mongodb
+volumes:
+  movies-db:
+    name: movies-db-volume
+  series-db:
+    name: series-db-volume
+  catalog-db:
+    name: catalog-db-volume

@@ -1,0 +1,29 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: catalog-service
+  data:
+    mongodb:
+      host: catalog-database
+      username: catalog
+      password: catalog
+      port: 27018
+      database: catalog_database
+  zipkin:
+    base-url: http://zipkin:9411/
+    enabled: true
+
+eureka:
+  instance:
+    preferIpAddress: true
+    leaseRenewalIntervalInSeconds: 5
+    leaseExpirationDurationInSeconds: 10
+  client:
+    fetchRegistry: false
+    registerWithEureka: true
+    healthCheck:
+      enabled: true
+    serviceUrl:
+      defaultZone: http://eureka-server:8761/eureka

@@ -1,0 +1,59 @@
+spring:
+  application:
+    name: movies-service
+  cloud:
+    config:
+      fail-fast: true
+      retry:
+        initial-interval: 1000
+        max-attempts: 30
+        max-interval: 20000
+        multiplier: 1.3
+  config:
+    activate:
+      on-profile: default
+    import: configserver:http://config-server:8888
+
+---
+
+spring:
+  jpa:
+    deferDatasourceInitialization: true
+    hibernate:
+      ddlAuto: create-drop
+  sql:
+    init:
+      mode: always
+      dataLocations: classpath:/data.sql
+  datasource:
+      url: jdbc:mysql://localhost:3306/movie-service
+      username: root
+      password: camrbdq12
+      driver-class-name: com.mysql.cj.jdbc.Driver
+  application:
+    name: movies-service
+  config:
+    activate:
+      on-profile: local
+  cloud:
+    config:
+      enabled: false
+  zipkin:
+    base-url: http://zipkin:9411/
+    enabled: true
+  rabbitmq:
+    username: guest
+    password: guest
+    host: rabbitmq
+    port: 5672
+eureka:
+  client:
+    fetchRegistry: true
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    preferIpAddress: true
+queue:
+  movie:
+    name: MovieQueue

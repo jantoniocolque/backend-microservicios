@@ -1,0 +1,30 @@
+server:
+  port: ${SERVER_PORT:8080}
+spring:
+  zipkin:
+    base-url: http://zipkin:9411/
+    enabled: true
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: false
+          lower-case-service-id: true
+      routes:
+        - id: catalog-service-route
+          uri: lb://catalog-service
+          predicates:
+            - Path=/catalog/**
+        - id: movies-service-route
+          uri: lb://movies-service
+          predicates:
+            - Path=/movies/**
+        - id: series-service-route
+          uri: lb://series-service
+          predicates:
+            - Path=/series/**
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+    #  defaultZone: http://service-registry/eureka
